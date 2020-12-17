@@ -1,70 +1,83 @@
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-<!-- Or if you want a more recent canary version -->
-<!-- <script src="https://cdn.jsdelivr.net/npm/hls.js@canary"></script> -->
-<!-- <div>
-  <button onclick="playPause()">Play/Pause</button> 
-  <button onclick="mute()">Mute/Unmute</button> 
-  <button onclick="makeBig()">Big</button>
-  <button onclick="makeSmall()">Small</button>
-  <button onclick="makeNormal()">Normal</button>
-  <button onclick="fullscreen()">Fullscreen</button>
-</div> -->
-<br />
-<video id="video" autoplay muted controls></video>
+<!DOCTYPE html>
+<html>
+  <body>
+    <style>
+      body {
+        background: #ED213A;
+        background: -webkit-linear-gradient(to right, #93291E, #ED213A);
+        background: linear-gradient(to right, #93291E, #ED213A);
+      }
 
-<script>
-  var video = document.getElementById('video');
-  if(Hls.isSupported()) {
-    var hls = new Hls();
-    hls.loadSource('http://localhost:8000/media/1/stream/');
-    hls.attachMedia(video);
-    hls.on(Hls.Events.MANIFEST_PARSED,function() {
-      video.play();
-      // video.muted = false;
-  });
- } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-    video.src = 'http://localhost:8000/media/1/stream/';
-    video.addEventListener('loadedmetadata',function() {
-      video.play();
-      // video.muted = false;
-    });
-  }
+      .player {
+        text-align: center;
+      }
 
-  function playPause() { 
-    if (video.paused) {
-      video.play(); 
-    } 
-    else {
-      video.pause();
-    }
-  }
-  
-  function mute() {
-    console.log(video.mute);
-    video.muted = !video.muted;
-  }
-
-  function makeBig() { 
-    video.width = 1000; 
-  }
-
-  function makeSmall() { 
-    video.width = 500; 
-  } 
-
-  function makeNormal() { 
-    video.width = 720; 
-  }
-
-  function fullscreen() {
-    if (video.requestFullscreen) {
-      video.requestFullscreen();
-    } else if (video.mozRequestFullScreen) {
-      video.mozRequestFullScreen();
-    } else if (video.webkitRequestFullscreen) {
-      video.webkitRequestFullscreen();
-    } else if (video.msRequestFullscreen) { 
-      video.msRequestFullscreen();
-    }
-  }
-</script>
+      video {
+        border-radius: 15px;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    
+    <div class="player">
+      <video id="video" autoplay muted controls></video>
+    </div>
+    
+    <script>
+      document.title = 'Stream';
+      var video = document.getElementById('video');
+      if(Hls.isSupported()) {
+        var hls = new Hls();
+        hls.loadSource('http://localhost:8000/media/1/stream/');
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED,function() {
+          video.play();
+          // video.muted = false;
+      });
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = 'http://localhost:8000/media/1/stream/';
+        video.addEventListener('loadedmetadata',function() {
+          video.play();
+          // video.muted = false;
+        });
+      }
+    
+      function playPause() { 
+        if (video.paused) {
+          video.play(); 
+        } 
+        else {
+          video.pause();
+        }
+      }
+      
+      function mute() {
+        console.log(video.mute);
+        video.muted = !video.muted;
+      }
+    
+      function makeBig() { 
+        video.width = 1000; 
+      }
+    
+      function makeSmall() { 
+        video.width = 500; 
+      } 
+    
+      function makeNormal() { 
+        video.width = 720; 
+      }
+    
+      function fullscreen() {
+        if (video.requestFullscreen) {
+          video.requestFullscreen();
+        } else if (video.mozRequestFullScreen) {
+          video.mozRequestFullScreen();
+        } else if (video.webkitRequestFullscreen) {
+          video.webkitRequestFullscreen();
+        } else if (video.msRequestFullscreen) { 
+          video.msRequestFullscreen();
+        }
+      }
+    </script>
+  </body>
+</html> 
