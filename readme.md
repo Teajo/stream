@@ -3,17 +3,16 @@
 ## Stream a mp4 video
 
 ```bash 
-./stream <mp4 file> <resolution> <chunk (seconds)>
+./stream <port> <mp4 file> <resolution> <chunk (seconds)>
 ```
-
-Just navigate to localhost:8000 to watch stream
 
 ## Example
 
 ```bash 
-./stream file.mp4 720x576 10
+./stream 8000 file.mp4 720x576 10
 ```
 
+Just navigate to localhost:8000 to watch stream
 
 ## Build 
 

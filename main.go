@@ -17,18 +17,22 @@ var folder string = "chunks"
 
 func main() {
 	args := os.Args[1:]
-	if len(args) == 0 {
+	if len(args) == 1 {
 		fmt.Println("Reuse previous chunks")
-	} else if len(args) < 3 {
+	} else if len(args) < 4 {
 		panic("Must provide video file, resolution and time chunk as arguments")
 	} else {
-		fmt.Println("Remove previous chunks")
+		file := args[1]
+		resolution := args[2]
+		timechunk := args[3]
+
+		fmt.Println("Clean previous chunks")
 		os.Remove(folder)
 		os.Mkdir(folder, os.ModePerm)
 		go func() {
 			start := time.Now()
-			fmt.Println("Chunk video file")
-			err := chunk(args[0], args[1], args[2])
+			fmt.Println(fmt.Sprintf("Chunk file %s with resolution %s by %s seconds", file, resolution, timechunk))
+			err := chunk(file, resolution, timechunk)
 			if err != nil {
 				panic(err)
 			}
@@ -38,8 +42,10 @@ func main() {
 		}()
 	}
 
+	port := args[0]
 	http.Handle("/", handlers())
-	http.ListenAndServe(":8000", nil)
+	fmt.Println(fmt.Sprintf("Listen at 127.0.0.1:%s", port))
+	http.ListenAndServe(fmt.Sprintf(":%s", port), nil)
 }
 
 func process() {
@@ -83,21 +89,30 @@ func getMediaBase(mId int) string {
 
 func serveHlsM3u8(w http.ResponseWriter, r *http.Request, mediaBase, m3u8Name string) {
 	mediaFile := fmt.Sprintf("%s/%s", folder, m3u8Name)
-	fmt.Println("mediaFile: ", mediaFile)
+	fmt.Println("MediaFile: ", mediaFile)
+
 	http.ServeFile(w, r, mediaFile)
 	w.Header().Set("Content-Type", "application/x-mpegURL")
 }
 
 func serveHlsTs(w http.ResponseWriter, r *http.Request, mediaBase, segName string) {
 	mediaFile := fmt.Sprintf("%s/%s", folder, segName)
-	fmt.Println("mediaFile: ", mediaFile)
+	fmt.Println("MediaFile: ", mediaFile)
+
 	http.ServeFile(w, r, mediaFile)
 	w.Header().Set("Content-Type", "video/MP2T")
 }
 
+func fileExists(file string) bool {
+	if _, err := os.Stat(file); os.IsNotExist(err) {
+		return false
+	}
+	return true
+}
+
 func chunk(file string, resolution string, chunkSize string) error {
 	ffmpeg := fmt.Sprintf("ffmpeg -i %s -profile:v baseline -level 3.0 -s %s -start_number 0 -hls_time %s -hls_list_size 0 -f hls %s/index.m3u8", file, resolution, chunkSize, folder)
-	fmt.Println("execute cmd", ffmpeg)
+	fmt.Println("Execute cmd", ffmpeg)
 	var errOutput bytes.Buffer
 	cmd := exec.Command("sh", "-c", ffmpeg)
 	cmd.Stderr = &errOutput
