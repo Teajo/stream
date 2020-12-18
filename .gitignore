@@ -1,3 +1,4 @@
 chunks
 stream
 *.mp4
+.env
