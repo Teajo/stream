@@ -133,11 +133,12 @@ func chunk(file string, resolution string, chunkSize string) error {
 }
 
 func getEnvPort() (string, error) {
-	v := os.Getenv("PORT")
-	if v == "" {
+	if len(os.Args) < 2 {
 		fmt.Println("PORT not provided. Stream will use 8000 instead")
 		return "8000", nil
 	}
+
+	v := os.Args[1]
 
 	if _, err := strconv.Atoi(v); err != nil {
 		return "8000", fmt.Errorf("Port %s is not valid. Stream will use 8000 instead", v)
@@ -147,31 +148,31 @@ func getEnvPort() (string, error) {
 }
 
 func getEnvFile() (string, error) {
-	v := os.Getenv("FILE")
-	if v == "" {
+	if len(os.Args) < 3 {
 		fmt.Println("FILE not provided. Stream will reuse previous file instead")
 		return "", nil
 	}
 
+	v := os.Args[2]
 	return v, nil
 }
 
 func getEnvResolution() (string, error) {
-	v := os.Getenv("RESOLUTION")
-	if v == "" {
+	if len(os.Args) < 4 {
 		fmt.Println("RESOLUTION not provided. Stream will use 720x576 instead")
 		return "720x576", nil
 	}
 
+	v := os.Args[3]
 	return v, nil
 }
 
 func getEnvChunk() (string, error) {
-	v := os.Getenv("CHUNK")
-	if v == "" {
+	if len(os.Args) < 5 {
 		fmt.Println("CHUNK not provided. Stream will use 10 instead")
 		return "10", nil
 	}
 
+	v := os.Args[4]
 	return v, nil
 }
